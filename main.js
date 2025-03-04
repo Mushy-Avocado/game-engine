@@ -1,13 +1,15 @@
-import Matter from 'https://cdn.jsdelivr.net/npm/matter-js@0.20.0/+esm'
-
+/**
+ * @namespace
+**/
 var Mushy = (function() {
     console.clear();
     
     const originalHTML = document.querySelector("html").outerHTML;
 
     // Clear junk animation frames (for refreshes on Khan Academy)
-    for (let i = window.requestAnimationFrame(function() {}); i > 0; i--) {
-        window.cancelAnimationFrame(i);
+    let id = window.requestAnimationFrame(function(){});
+    while(id--) {
+        window.cancelAnimationFrame(id);
     }
 
     /**
@@ -1627,6 +1629,7 @@ var Mushy = (function() {
             this.collision = new CollisionManager(this);
             this.sprites.clear();
             Matter.Engine.clear(this.engine);
+            Matter.Composite.clear(this.engine.world);
         }
 
     }
@@ -2290,5 +2293,3 @@ var Mushy = (function() {
     };
 
 })();
-
-export default Mushy;
