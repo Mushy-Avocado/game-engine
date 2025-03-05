@@ -1,3 +1,5 @@
+import Matter from 'https://cdn.jsdelivr.net/npm/matter-js@0.20.0/+esm';
+
 /**
  * @module Mushy
 **/
@@ -2415,3 +2417,5 @@ var Mushy = (function() {
     };
 
 })();
+
+export default Mushy;
