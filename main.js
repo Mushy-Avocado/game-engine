@@ -2378,6 +2378,7 @@ var Mushy = (function() {
         Physics,
         Renderer,
         Loop,
+        Mathf,
         CollisionManager,
         CollisionListenManager,
         CanvasFit,
