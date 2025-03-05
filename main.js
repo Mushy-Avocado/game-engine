@@ -1,5 +1,5 @@
 /**
- * @namespace
+ * @module Mushy
 **/
 var Mushy = (function() {
     console.clear();
@@ -14,6 +14,8 @@ var Mushy = (function() {
 
     /**
      * Math class extensions that use degrees.
+     * @memberof module:Mushy
+     * @static
     **/
     class Mathf {
 
@@ -56,7 +58,7 @@ var Mushy = (function() {
          * @param {number} value - The value to map.
          * @param {number} start1
          * @param {number} stop1
-         * @parm {number} start2
+         * @param {number} start2
          * @param {number} stop2
          * @returns {number} The mapped value.
         **/
@@ -207,10 +209,18 @@ var Mushy = (function() {
         static random(min, max) {
             return (Math.random() * (max - min)) + min;
         }
+
+        /**
+         * Don't use this constructor. Math is a static class.
+        **/
+        constructor() {
+
+        }
     }
     
     /**
      * Controls how the canvas fits within its parent element.
+     * @memberof module:Mushy
     **/
     class CanvasFit {
         
@@ -248,7 +258,8 @@ var Mushy = (function() {
         render;
         
         /**
-         * @private
+         * Creates a new canvas fit.
+         * @param {Renderer} render - The renderer to use to fit the canvas.
         **/
         constructor(render) {
             this.render = render;
@@ -297,6 +308,7 @@ var Mushy = (function() {
 
     /**
      * Mimics P5.js but with better performance.
+     * @memberof module:Mushy
     **/
     class Renderer {
         /**
@@ -343,7 +355,9 @@ var Mushy = (function() {
         }
 
         /**
-         * @private
+         * Creates a new renderer. 
+         * @param {Scene} scene - The scene to attach to.
+         * @param {HTMLCanvasElement} canvas - The canvas to use.
         **/
         constructor(scene, canvas) {
             this.scene = scene;
@@ -825,6 +839,7 @@ var Mushy = (function() {
     
     /**
      * Invokes given callbacks when certain events are triggered. Allows for passing arguments to callbacks 
+     * @memberof module:Mushy
     **/
     class EventSystem {
         
@@ -832,6 +847,13 @@ var Mushy = (function() {
          * @private
         **/
         listeners = {};
+
+        /**
+         * Creates a new event system.
+        **/
+        constructor() {
+
+        }
 
         /**
          * Makes the given callback be invoked when the event is triggered.
@@ -863,20 +885,24 @@ var Mushy = (function() {
 
     /**
      * A class with methods for controlling the physics of a matter body.
+     * @memberof module:Mushy
     **/
     class MatterSprite extends EventSystem {
 
         /**
          * @private
         **/
-        isDead = false;e
+        isDead = false;
         
         /**
-         * {object} A Matter.js physics body.
+         * A Matter.js physics body.
+         * @type {object}
         **/
         body = null;
         
         /**
+         * Creates a new matter sprite.
+         * 
          * @param {object} matterBody - The matter body to attach to this sprite.
         **/
         constructor(matterBody) {
@@ -889,7 +915,8 @@ var Mushy = (function() {
         }
 
         /**
-         * {number} The x position of the body.
+         * The x position of the body.
+         * @type {number}
         **/
         get x() {
             return this.body.position.x;
@@ -899,7 +926,8 @@ var Mushy = (function() {
         }
         
         /**
-         * {number} The y position of the body.
+         * The y position of the body.
+         * @type {number}
         **/
         get y() {
             return this.body.position.y;
@@ -909,60 +937,68 @@ var Mushy = (function() {
         }
 
         /**
-         * {number} The x velocity of the body.
+         * The x velocity of the body.
          * @readonly
+         * @type {number}
         **/
         get velocityX() {
             return this.body.velocity.x;
         }
 
         /**
-         * {number} The y velocity of the body.
+         * The y velocity of the body.
          * @readonly
+         * @type {number}
         **/
         get velocityY() {
             return this.body.velocity.y;
         }
         
         /**
-         * {number} The angular velocity of the body.
+         * The angular velocity of the body.
          * @readonly
+         * @type {number}
         **/
         get angularVelocity() {
             return this.body.angularVelocity;
         }
 
         /**
-         * {number} The angle of the body in degrees.
+         * The angle of the body in degrees.
          * @readonly
+         * @type {number}
         **/
         get angle() {
             return Mathf.degrees(this.body.angle);
         }
 
         /**
-         * {number} The area of the body.
+         * The area of the body.
+         * @type {number}
         **/
         get area() {
             return this.body.area;
         }
 
         /**
-         * {object} The bounds of the body.
+         * The bounds of the body.
+         * @type {number}
         **/
         get bounds() {
             return this.body.bounds;
         }
 
         /**
-         * {number} The density of the body.
+         * The density of the body.
+         * @type {number}
         **/
         get density() {
             return this.body.density;
         }
 
         /**
-         * {number} The mass of the body.
+         * The mass of the body.
+         * @type {number}
         **/
         get mass() {
             return this.body.mass;
@@ -1162,6 +1198,7 @@ var Mushy = (function() {
 
     /**
      * A collection of matter sprites.
+     * @memberof module:Mushy
     **/
     class Group extends EventSystem {
         
@@ -1171,7 +1208,9 @@ var Mushy = (function() {
         items = [];
         
         /**
-         * @private
+         * Creates a new group.
+         * 
+         * @param {Array<MatterSprite>} items - The items to initialize the group with.
         **/
         constructor(items = []) {
             super();
@@ -1220,6 +1259,7 @@ var Mushy = (function() {
     
     /**
      * Controls callbacks for when objects collide
+     * @memberof module:Mushy
     **/
     class CollisionListenManager {
         
@@ -1229,7 +1269,9 @@ var Mushy = (function() {
         listenPairs = new Map();
         
         /**
-         * @private
+         * Creates a new collision listen manager.
+         * 
+         * @param {Physics} physics - The physics engine to attach to.
         **/
         constructor(physics) {
             this.physics = physics;
@@ -1370,6 +1412,7 @@ var Mushy = (function() {
 
     /**
      * Controls what collides with what.
+     * @memberof module:Mushy
     **/
     class CollisionManager {
         
@@ -1384,7 +1427,9 @@ var Mushy = (function() {
         callbacks = new Map();
 
         /**
-         * @private
+         * Creates a new collision manager.
+         * 
+         * @param {Physics} physics - The physics engine to attach to.
         **/
         constructor(physics) {
             this.listener = new CollisionListenManager(physics);
@@ -1469,6 +1514,7 @@ var Mushy = (function() {
 
     /**
      * Creates new bodies and manages gravity. 
+     * @memberof module:Mushy
     **/
     class Physics {
 
@@ -1500,7 +1546,9 @@ var Mushy = (function() {
         collision = new CollisionManager(this);                 
 
         /**
-         * @private
+         * Creates a new physics engine.
+         * 
+         * @param {Scene} scene - The scene to attach to.
         **/
         constructor(scene) {
             this.scene = scene;
@@ -1636,16 +1684,19 @@ var Mushy = (function() {
 
     /**
      * Manages the main processing loop in a scene
+     * @memberof module:Mushy
     **/
     class Loop {
         
         /**
-         * {number} The number of milliseconds between this frame and the last one
+         * The number of milliseconds between this frame and the last one
+         * @type {number}
         **/
         deltaTime = 1000 / 60;
         
         /** 
-         * {number} The minimum FPS for delta time values (too low of fps will cause issues with physics calculations)
+         * The minimum FPS for delta time values (too low of fps will cause issues with physics calculations)
+         * @type {number}
         **/
         minFPS = 30;
         
@@ -1660,7 +1711,9 @@ var Mushy = (function() {
         lastFrame = performance.now();
 
         /**
-         * @private
+         * Creates a new loop.
+         * 
+         * @param {Scene} scene - The scene to attach to.
         **/
         constructor(scene) {
             this.scene = scene;
@@ -1720,26 +1773,32 @@ var Mushy = (function() {
 
     /**
      * Manages key input.
+     * @memberof module:Mushy
     **/
     class KeyInput {
 
         /**
-         * Array<string> The keys that are currently pressed.
+         * The keys that are currently pressed.
+         * @type {Array<string>}
         **/
         pressed = [];
         
         /**
-         * Array<string> The keys that were just pressed this frame.
+         * The keys that were just pressed this frame.
+         * @type {Array<string>}
         **/
         down = [];
         
         /**
-         * Array<string> The keys that were just released this frame.
+         * The keys that were just released this frame.
+         * @type {Array<string>}
         **/
         up = [];
 
         /**
-         * @private
+         * Creates a new key input.
+         * 
+         * @param {Scene} scene - The scene to attach to.
         **/
         constructor(scene) {
             this.scene = scene;
@@ -1791,56 +1850,68 @@ var Mushy = (function() {
 
     /**
      * Manages mouse input.
+     * @memberof module:Mushy
     **/
     class MouseInput {
         
         /**
-         * {number} x position of the mouse relative to the canvas.
+         * x position of the mouse relative to the canvas.
+         * @type {number}
         **/
         x = 0;
         
         /**
-         * {number} y position of the mouse relative to the canvas.
+         * y position of the mouse relative to the canvas.
+         * @type {number}
         **/
         y = 0;
 
         /**
-         * {bool} Returns true every frame the left mouse button is pressed
+         * Returns true every frame the left mouse button is pressed
+         * @type {bool}
         **/
         left = false;
         
         /**
-         * {bool} Returns true the frame the left mouse button is released
+         * Returns true the frame the left mouse button is released
+         * @type {bool}
         **/
         leftUp = false;
         
         /**
-         * {bool} Returns true the frame the left mouse button is pressed
+         * Returns true the frame the left mouse button is pressed
+         * @type {bool}
         **/
         leftDown = false;
         
         /**
-         * {bool} Returns true every frame the right mouse button is pressed
+         * Returns true every frame the right mouse button is pressed
+         * @type {bool}
         **/
         right = false;
         
         /**
-         * {bool} Returns true the frame the right mouse button is pressed
+         * Returns true the frame the right mouse button is pressed
+         * @type {bool}
         **/
         rightUp = false;
         
         /**
-         * {bool} Returns true the frame the right mouse button is released
+         * Returns true the frame the right mouse button is released
+         * @type {bool}
         **/
         rightDown = false;
 
         /**
-         * {bool} Whether to enable the right click menu.
+         * Whether to enable the right click menu.
+         * @type {bool}
         **/
         contextMenu = false;
 
         /**
-         * @private
+         * Creates a new mouse input.
+         * 
+         * @param {Scene} scene - The scene to attach to.
         **/
         constructor(scene) {
             this.scene = scene;
@@ -1911,11 +1982,26 @@ var Mushy = (function() {
 
     /**
      * Manages mouse/keyboard input.
+     * @memberof module:Mushy
     **/
     class Input {
         
         /**
-         * @private
+         * The input from the mouse.
+         * @type {MouseInput}
+        **/
+        mouse = null;
+
+        /**
+         * The input from the keys.
+         * @type {KeyInput}
+        **/
+        keys = null;
+
+        /**
+         * Creates a new input manager.
+         * 
+         * @param {Scene} scene - The scene to attach to.
         **/
         constructor(scene) {
             this.mouse = new MouseInput(scene);
@@ -1949,14 +2035,14 @@ var Mushy = (function() {
 
     /**
      * Manages the defining and execution of commands.
+     * @memberof module:Mushy
     **/
     class CommandLine {
         
         /**
-         * @private
+         * Creates a new command line.
         **/
-        constructor(console) {
-            this.console = console;
+        constructor() {
             this.commands = {};
         }
     
@@ -1989,7 +2075,7 @@ var Mushy = (function() {
             try {
                 args = argStrings.map(arg => JSON.parse(arg));
             } catch (e) {
-                this.console.log("Error in argument: " + e);
+                Console.log("Error in argument: " + e);
                 return;
             }
     
@@ -1997,16 +2083,17 @@ var Mushy = (function() {
                 try {
                     this.commands[commandName].apply(null, args);
                 } catch (e) {
-                    this.console.log("Error in command: " + e);
+                    Console.log("Error in command: " + e);
                 }
             } else {
-                this.console.log(`Unknown command: ${commandName}`);
+                Console.log(`Unknown command: ${commandName}`);
             }
         }
     }
     
     /**
      * Manages logging to the console and HTML styling for it.
+     * @memberof module:Mushy
     **/
     class Console {
         
@@ -2016,7 +2103,7 @@ var Mushy = (function() {
         static isOpen = false;
         
         /**
-         * {CommandLine}
+         * @type {CommandLine}
         **/
         static commands = new CommandLine(this);
         
@@ -2114,40 +2201,54 @@ var Mushy = (function() {
             const event = new CustomEvent("commandOutput", { detail: message });
             document.dispatchEvent(event);
         }
+
+        /**
+         * Don't use this constructor. Console is a static class.
+        **/
+        constructor() {
+
+        }
     }
 
     /**
      * A composite class that contains all the components of a scene.
+     * @memberof module:Mushy
     **/
     class Scene {
 
         /**
-         * {object} The data passed to the scene on load.
+         * The data passed to the scene on load.
+         * @type {object}
         **/
         data = {};
     
         /**
-         * {Renderer} The renderer in the scene.
+         * The renderer in the scene.
+         * @type {Renderer}
         **/
         render = null;
         
         /**
-         * {Physics} The physics in the scene.
+         * The physics in the scene.
+         * @type {Physics} 
         **/
         physics = null;
         
         /**
-         * {Input} The input in the scene.
+         * The input in the scene.
+         * @type {Input}
         **/
         input = null;
         
         /**
-         * {Loop} The loop in the scene.
+         * The loop in the scene.
+         * @type {Loop}
         **/
         loop = null;
 
         /**
-         * @private
+         * Creates a new scene.
+         * @param {HTMLCanvasElement} canvas - The canvas element to attach to the renderer.
         **/
         constructor(canvas = document.createElement("canvas")) {
             canvas.tabIndex = 0;
@@ -2161,7 +2262,7 @@ var Mushy = (function() {
         /**
          * Creates a group of matter sprites.
          * 
-         * @param {Array<MatterSprite} items
+         * @param {Array<MatterSprite>} items
          * @returns {Group}
         **/
         group(items) {
@@ -2226,19 +2327,25 @@ var Mushy = (function() {
     
     /**
      * Controls the loading of multiple scenes.
+     * @memberof module:Mushy
     **/
     class SceneManager {
         
+        /**
+         * @private
+        **/
         scenes = {};
+
+        /**
+         * @private
+        **/
         currentScene = null;
         
         /**
-         * @param {object} scenes - A set of key/value pairs. Each key is a string identifying the scene and each value is a class that inherits from Scene.
+         * @param {Object<string, Scene>} scenes - The scenes to add to the scene manager.
         **/
         constructor(scenes) {
-            for (const [key, value] of Object.entries(scenes)) {
-                this.scenes[key] = new value();
-            }
+            this.scenes = scenes;
         }
         
         /**
@@ -2263,19 +2370,34 @@ var Mushy = (function() {
         Scene,
         Console,
         SceneManager,
-        Math: Mathf,
-        Matter, // A refernce to the Matter.js instance.
+        Input,
+        MouseInput,
+        KeyInput,
+        Physics,
+        Renderer,
+        Loop,
+        CollisionManager,
+        CollisionListenManager,
+        CanvasFit,
+        EventSystem,
+        /**
+         * A reference to the Matter.js instance.
+         * @type {object}
+        **/
+        Matter,
         MatterSprite,
         
         /**
-         * {bool} Returns true if the scene has been opened in fullscreen
+         * Returns true if the scene has been opened in fullscreen
+         * @type {bool}
         **/
         get isFullscreen() {
             return !!window.opener;
         },
         
         /**
-         * {bool} Returns true if the game is located within the Khan Academy environment
+         * Returns true if the game is located within the Khan Academy environment
+         * @type {bool}
         **/
         get isKhanAcademy() {
             return window.location.href.includes("kasandbox");
