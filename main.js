@@ -1613,7 +1613,9 @@ var Mushy = (function() {
         }
 
         /**
-         * @private
+         * Applies gravity to the matter body.
+         * 
+         * @param {MatterSprite} matterSprite - The body to apply gravity to.
         **/
         applyGravity(matterSprite) {
             matterSprite.addForce(this.gravityX * matterSprite.mass, this.gravityY * matterSprite.mass);
@@ -2280,16 +2282,6 @@ var Mushy = (function() {
             this.input = new Input(canvas);
             this.physics = new Physics();
             this.loop = new Loop();
-        }
-        
-        /**
-         * Creates a group of matter sprites.
-         * 
-         * @param {Array<MatterSprite>} [items=[]]
-         * @returns {Group}
-        **/
-        group(items = []) {
-            return new Group(items);
         }
 
         /**
