@@ -1,7 +1,7 @@
 import Matter from 'https://cdn.jsdelivr.net/npm/matter-js@0.20.0/+esm';
 
 /**
- * @module Mushy
+ * @namespace Mushy
 **/
 var Mushy = (function() {
     console.clear();
@@ -16,7 +16,8 @@ var Mushy = (function() {
 
     /**
      * Math extensions that use degrees.
-     * @memberof module:Mushy
+     * @memberof Mushy
+     * @namespace Mathf
     **/
     const Mathf = {
 
@@ -27,6 +28,7 @@ var Mushy = (function() {
          * @param {number} min - The minimum range to constrain to.
          * @param {number} max - The maximum range to constrain to.
          * @returns {number} The constrained value.
+         * @memberof Mushy.Mathf
         **/
         constrain(value, min, max) {
             return Math.min(max, Math.max(value, min));
@@ -37,6 +39,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number} The angle converted to radians.
+         * @memberof Mushy.Mathf
         **/
         radians(degrees) {
             return degrees * (Math.PI / 180);
@@ -47,6 +50,7 @@ var Mushy = (function() {
          * 
          * @param {number} radians
          * @returns {number} The angle converted to degrees.
+         * @memberof Mushy.Mathf
         **/
         degrees(radians) {
             return radians * (180 / Math.PI);
@@ -62,6 +66,7 @@ var Mushy = (function() {
          * @param {number} start2
          * @param {number} stop2
          * @returns {number} The mapped value.
+         * @memberof Mushy.Mathf
         **/
         map(value, start1, stop1, start2, stop2) {
             let mappedValue = start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1);
@@ -81,6 +86,7 @@ var Mushy = (function() {
          * @param {number} stop
          * @param {number} amount - A value between zero and one.
          * @returns {number} The lerped value.
+         * @memberof Mushy.Mathf
         **/
         lerp(start, stop, amt) {
             return start + (stop - start) * amt;
@@ -93,6 +99,7 @@ var Mushy = (function() {
          * @param {number} stop
          * @param {number} value - A number between start and stop.
          * @returns {number} A 0-1 value.
+         * @memberof Mushy.Mathf
         **/
         inverseLerp(start, stop, value) {
             return (value - start) / (stop - start);
@@ -103,6 +110,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         sin(degrees) {
             return Math.sin(this.radians(degrees));
@@ -113,6 +121,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         cos(degrees) {
             return Math.cos(this.radians(degrees));
@@ -123,6 +132,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         tan(degrees) {
             return Math.tan(this.radians(degrees));
@@ -133,6 +143,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         atan(degrees) {
             return Math.atan(this.radians(degrees));
@@ -143,6 +154,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         atan2(degrees) {
             return Math.atan2(this.radians(degrees));
@@ -153,6 +165,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         acos(degrees) {
             return Math.acos(this.radians(degrees));
@@ -163,6 +176,7 @@ var Mushy = (function() {
          * 
          * @param {number} degrees
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         asin(degrees) {
             return Math.asin(this.radians(degrees));
@@ -176,6 +190,7 @@ var Mushy = (function() {
          * @param {number} x2
          * @param {number} y2
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         dist(x1, y1, x2, y2) {
             return Math.hypot(x1 - x2, y1 - y2);
@@ -189,6 +204,7 @@ var Mushy = (function() {
          * @param {number} x2
          * @param {number} y2
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         sqDist(x1, y1, x2, y2) {
             return this.sq(x1 - x2) + this.sq(y1 - y2);
@@ -199,6 +215,7 @@ var Mushy = (function() {
          * 
          * @param {number} value
          * @returns {number}
+         * @memberof Mushy.Mathf
         **/
         sq(value) {
             return value * value;
@@ -206,6 +223,7 @@ var Mushy = (function() {
         
         /**
          * Returns a random number between the min range (inclusive) and max range (exclusive).
+         * @memberof Mushy.Mathf
         **/
         random(min, max) {
             return (Math.random() * (max - min)) + min;
@@ -214,7 +232,7 @@ var Mushy = (function() {
     
     /**
      * Controls how the canvas fits within its parent element.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class CanvasFit {
         
@@ -289,7 +307,7 @@ var Mushy = (function() {
 
     /**
      * Mimics P5.js but with better performance.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Renderer {
         /**
@@ -806,7 +824,7 @@ var Mushy = (function() {
     
     /**
      * Invokes given callbacks when certain events are triggered. Allows for passing arguments to callbacks 
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class EventSystem {
         
@@ -852,7 +870,7 @@ var Mushy = (function() {
 
     /**
      * A class with methods for controlling the physics of a matter body.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class MatterSprite extends EventSystem {
 
@@ -1165,7 +1183,7 @@ var Mushy = (function() {
 
     /**
      * A collection of matter sprites.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Group extends EventSystem {
         
@@ -1226,7 +1244,7 @@ var Mushy = (function() {
     
     /**
      * Controls callbacks for when objects collide.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class CollisionListenManager {
         
@@ -1390,7 +1408,7 @@ var Mushy = (function() {
 
     /**
      * Controls what collides with what.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class CollisionManager {
         
@@ -1499,7 +1517,7 @@ var Mushy = (function() {
 
     /**
      * Creates new bodies and manages gravity, as well as collisions.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Physics {
 
@@ -1658,7 +1676,7 @@ var Mushy = (function() {
 
     /**
      * Manages the main processing loop in a scene
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Loop {
         
@@ -1747,7 +1765,7 @@ var Mushy = (function() {
 
     /**
      * Manages key input.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class KeyInput {
 
@@ -1824,7 +1842,7 @@ var Mushy = (function() {
 
     /**
      * Manages mouse input.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class MouseInput {
         
@@ -1962,7 +1980,7 @@ var Mushy = (function() {
 
     /**
      * Manages mouse/keyboard input.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Input {
         
@@ -2015,7 +2033,7 @@ var Mushy = (function() {
 
     /**
      * Manages the defining and execution of commands.
-     * @memberof module:Mushy
+     * @memberof Mushy.Console
     **/
     class CommandLine {
         
@@ -2044,7 +2062,8 @@ var Mushy = (function() {
         }
     
         /**
-         * @private
+         * Parses a string as a command and executes it.
+         * @param {string} string - The string to parse.
         **/
         exec(string) {
             const parts = string.split(" ");
@@ -2072,9 +2091,9 @@ var Mushy = (function() {
     }
     
     /**
-     * Manages logging to the console and HTML styling for it.
-     * @memberof module:Mushy
-     * @module Console
+     * Manages logging to the console.
+     * @namespace Console
+     * @memberof Mushy
     **/
     const Console = {
         
@@ -2086,6 +2105,7 @@ var Mushy = (function() {
         /**
          * The command line on the console.
          * @type {CommandLine}
+         * @memberof Mushy.Console
         **/
         commands: new CommandLine(this),
         
@@ -2180,7 +2200,8 @@ var Mushy = (function() {
         /**
          * Logs a message to the console.
          * 
-         * @param {string} message
+         * @memberof Mushy.Console
+         * @param {string} message - The message to log.
         **/
         log(message) {
             const event = new CustomEvent("commandOutput", { detail: message });
@@ -2191,7 +2212,7 @@ var Mushy = (function() {
 
     /**
      * A composite class that contains all the components of a scene.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class Scene {
 
@@ -2334,7 +2355,7 @@ var Mushy = (function() {
     
     /**
      * Controls the loading of multiple scenes.
-     * @memberof module:Mushy
+     * @memberof Mushy
     **/
     class SceneManager {
         
@@ -2372,8 +2393,8 @@ var Mushy = (function() {
         }
         
     }
-    
-    return {
+
+    const Mushy = {
         Scene,
         /**
          * A reference to the Console object.
