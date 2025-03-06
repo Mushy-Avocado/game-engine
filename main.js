@@ -2311,7 +2311,7 @@ var Mushy = (function() {
             this.render.load();
             this.collider.load();
             this.collisionListener.load();
-            this.load();
+            this.load(data);
         }
         
         /**
