@@ -2391,12 +2391,9 @@ var Mushy = (function() {
     }
 
     return {
-        Scene,
-        /**
-         * A reference to the Console object.
-         * @type {object}
-        **/
         Console,
+        Mathf,
+        Scene,
         SceneManager,
         Input,
         MouseInput,
@@ -2404,7 +2401,7 @@ var Mushy = (function() {
         Physics,
         Renderer,
         Loop,
-        Mathf,
+        Group,
         CollisionManager,
         CollisionListenManager,
         CanvasFit,
