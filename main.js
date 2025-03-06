@@ -2390,7 +2390,7 @@ var Mushy = (function() {
         
     }
 
-    const Mushy = {
+    return {
         Scene,
         /**
          * A reference to the Console object.
