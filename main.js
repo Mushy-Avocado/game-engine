@@ -15,11 +15,10 @@ var Mushy = (function() {
     }
 
     /**
-     * Math class extensions that use degrees.
+     * Math extensions that use degrees.
      * @memberof module:Mushy
-     * @static
     **/
-    class Mathf {
+    const Mathf = {
 
         /**
          * Constrains a value between the given minimum and maximum.
@@ -29,9 +28,9 @@ var Mushy = (function() {
          * @param {number} max - The maximum range to constrain to.
          * @returns {number} The constrained value.
         **/
-        static constrain(value, min, max) {
+        constrain(value, min, max) {
             return Math.min(max, Math.max(value, min));
-        }
+        },
 
         /**
          * Converts degrees to radians.
@@ -39,9 +38,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number} The angle converted to radians.
         **/
-        static radians(degrees) {
+        radians(degrees) {
             return degrees * (Math.PI / 180);
-        }
+        },
 
         /**
          * Converts radians to degrees.
@@ -49,9 +48,9 @@ var Mushy = (function() {
          * @param {number} radians
          * @returns {number} The angle converted to degrees.
         **/
-        static degrees(radians) {
+        degrees(radians) {
             return radians * (180 / Math.PI);
-        }
+        },
 
         
         /**
@@ -64,7 +63,7 @@ var Mushy = (function() {
          * @param {number} stop2
          * @returns {number} The mapped value.
         **/
-        static map(value, start1, stop1, start2, stop2) {
+        map(value, start1, stop1, start2, stop2) {
             let mappedValue = start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1);
 
             if (start2 < stop2) {
@@ -74,7 +73,7 @@ var Mushy = (function() {
             }
 
             return mappedValue;
-        }
+        },
 
         /**
          * Linearly interpolates between 2 values given a range of 0-1
@@ -83,9 +82,9 @@ var Mushy = (function() {
          * @param {number} amount - A value between zero and one.
          * @returns {number} The lerped value.
         **/
-        static lerp(start, stop, amt) {
+        lerp(start, stop, amt) {
             return start + (stop - start) * amt;
-        }
+        },
 
         /**
          * Returns the position of a value in a range, represented as a 0-1 value.
@@ -95,9 +94,9 @@ var Mushy = (function() {
          * @param {number} value - A number between start and stop.
          * @returns {number} A 0-1 value.
         **/
-        static inverseLerp(start, stop, value) {
+        inverseLerp(start, stop, value) {
             return (value - start) / (stop - start);
-        }
+        },
 
         /**
          * Returns the value of sine given an angle in degrees
@@ -105,9 +104,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static sin(degrees) {
+        sin(degrees) {
             return Math.sin(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of cosine given an angle in degrees
@@ -115,9 +114,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static cos(degrees) {
+        cos(degrees) {
             return Math.cos(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of tangent given an angle in degrees
@@ -125,9 +124,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static tan(degrees) {
+        tan(degrees) {
             return Math.tan(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of arctangent given an angle in degrees
@@ -135,9 +134,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static atan(degrees) {
+        atan(degrees) {
             return Math.atan(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of atan2 given an angle in degrees
@@ -145,9 +144,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static atan2(degrees) {
+        atan2(degrees) {
             return Math.atan2(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of arccosine given an angle in degrees
@@ -155,9 +154,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static acos(degrees) {
+        acos(degrees) {
             return Math.acos(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the value of arcsine given an angle in degrees
@@ -165,9 +164,9 @@ var Mushy = (function() {
          * @param {number} degrees
          * @returns {number}
         **/
-        static asin(degrees) {
+        asin(degrees) {
             return Math.asin(this.radians(degrees));
-        }
+        },
 
         /**
          * Returns the distance between 2 points.
@@ -178,9 +177,9 @@ var Mushy = (function() {
          * @param {number} y2
          * @returns {number}
         **/
-        static dist(x1, y1, x2, y2) {
+        dist(x1, y1, x2, y2) {
             return Math.hypot(x1 - x2, y1 - y2);
-        }
+        },
 
         /**
          * Returns the squared distance between 2 points. (More efficient)
@@ -191,9 +190,9 @@ var Mushy = (function() {
          * @param {number} y2
          * @returns {number}
         **/
-        static sqDist(x1, y1, x2, y2) {
+        sqDist(x1, y1, x2, y2) {
             return this.sq(x1 - x2) + this.sq(y1 - y2);
-        }
+        },
 
         /**
          * Returns a given number multiplied by itself.
@@ -201,24 +200,17 @@ var Mushy = (function() {
          * @param {number} value
          * @returns {number}
         **/
-        static sq(value) {
+        sq(value) {
             return value * value;
-        }
+        },
         
         /**
          * Returns a random number between the min range (inclusive) and max range (exclusive).
         **/
-        static random(min, max) {
+        random(min, max) {
             return (Math.random() * (max - min)) + min;
-        }
-
-        /**
-         * Don't use this constructor. Math is a static class.
-        **/
-        constructor() {
-
-        }
-    }
+        },
+    };
     
     /**
      * Controls how the canvas fits within its parent element.
@@ -231,54 +223,47 @@ var Mushy = (function() {
          * @type {bool}
         **/
         get center() {
-            return JSON.parse(this.render.canvas.dataset.center ?? true);
+            return JSON.parse(this.canvas.dataset.center ?? true);
         }
         set center(value) {
-            this.render.canvas.dataset.center = value;
-        }
-        
-        /** 
-         * Whether to resize the canvas to fit its parent. Disabling this disables centering.
-         * @type {bool}
-        **/
-        get resize() {
-            return JSON.parse(this.render.canvas.dataset.resize ?? true);
-        }
-        set resize(value) {
-            this.render.canvas.dataset.resize = value;
+            this.canvas.dataset.center = value;
         }
         
         /**
-         * The scale of the canvas that was used to fit its parent (for rendering and input purposes)
+         * The scale of the canvas that was used to fit its parent.
          * @type {number}
+         * @readonly
         **/
-        scale = 1;
+        get scale() {
+            return this.canvas.dataset.scale;
+        }
         
         /**
          * @private
         **/
-        render;
+        canvas = null;
         
         /**
          * Creates a new canvas fit.
-         * @param {Renderer} render - The renderer to use to fit the canvas.
+         * 
+         * @param {HTMLCanvasElement} canvas - The canvas to fit to its parent.
         **/
-        constructor(render) {
-            this.render = render;
+        constructor(canvas) {
+            this.canvas = canvas;
         }
         
         /**
-         * @private
+         * Updates the size of the canvas.
+         * 
+         * @param {number} targetWidth - The target width of the canvas.
+         * @param {number} targetHeight - The target height of the canvas.
         **/
-        push() {
-            const render = this.render;
-            render.pushMatrix();
-            if (this.resize === false) return;
-            const canvas = render.canvas;
+        resize(targetWidth, targetHeight) {
+            const canvas = this.canvas;
             const canvasParent = canvas.parentElement;
             const parentBounds = canvasParent.getBoundingClientRect();
             const canvasBounds = canvas.getBoundingClientRect();
-            const canvasAR = render.width / render.height;
+            const canvasAR = targetWidth / targetHeight;
             const parentAR = parentBounds.width / parentBounds.height;
             if (canvasAR < parentAR) {
                 canvas.width = parentBounds.height * canvasAR;
@@ -295,15 +280,9 @@ var Mushy = (function() {
                     canvas.style.marginTop = (parentBounds.height - canvas.height) / 2 + "px";
                 }
             }
-            this.scale = Math.min(canvas.width / render.width, canvas.height / render.height);
-            render.scale(this.scale, this.scale);
-        }
-        
-        /**
-         * @private
-        **/
-        pop() {
-            this.render.popMatrix();
+            canvas.dataset.targetWidth = targetWidth;
+            canvas.dataset.targetHeight = targetHeight;
+            canvas.dataset.scale = Math.min(canvas.width / targetWidth, canvas.height / targetHeight);
         }
         
     }
@@ -321,7 +300,7 @@ var Mushy = (function() {
         
         /**
          * The canvas attached to this renderer.
-         * @type {Canvas}
+         * @type {HTMLCanvasElement}
         **/
         canvas = null;
                 
@@ -334,15 +313,11 @@ var Mushy = (function() {
          * @private
         **/
         textSettings = {};
-        
-        /**
-         * @private
-        **/
-        fit = null;
 
         /**
          * The width of the renderer.
          * @type {number}
+         * @readonly
         **/
         get width() {
             return this.canvas.dataset.actualWidth;
@@ -351,6 +326,7 @@ var Mushy = (function() {
         /**
          * The height of the renderer.
          * @type {number}
+         * @readonly
         **/
         get height() {
             return this.canvas.dataset.actualHeight;
@@ -358,25 +334,14 @@ var Mushy = (function() {
 
         /**
          * Creates a new renderer. 
-         * @param {Scene} scene - The scene to attach to.
          * @param {HTMLCanvasElement} canvas - The canvas to use.
         **/
-        constructor(scene, canvas) {
-            this.scene = scene;
+        constructor(canvas) {
             this.canvas = canvas;
-            if (!this.canvas.dataset.actualWidth) {
-                this.canvas.dataset.actualWidth = 600;
-                this.canvas.width = 600;
-            }
-            if (!this.canvas.dataset.actualHeight) {
-                this.canvas.dataset.actualHeight = 600;
-                this.canvas.height = 600;
-            }
-            this.fit = new CanvasFit(this);
         }
         
         /**
-         * Resizes the canvas. Will not reflect actual size if renderer.fit.resize is enabled.
+         * Resizes the canvas. Will not reflect actual size if a CanvasFit is attached to the canvas.
          * 
          * @param {number} width
          * @param {number} height
@@ -1212,7 +1177,7 @@ var Mushy = (function() {
         /**
          * Creates a new group.
          * 
-         * @param {Array<MatterSprite>} items - The items to initialize the group with.
+         * @param {Array<MatterSprite>} [items=[]] - The items to initialize the group with.
         **/
         constructor(items = []) {
             super();
@@ -1260,7 +1225,7 @@ var Mushy = (function() {
     }
     
     /**
-     * Controls callbacks for when objects collide
+     * Controls callbacks for when objects collide.
      * @memberof module:Mushy
     **/
     class CollisionListenManager {
@@ -1272,12 +1237,9 @@ var Mushy = (function() {
         
         /**
          * Creates a new collision listen manager.
-         * 
-         * @param {Physics} physics - The physics engine to attach to.
         **/
-        constructor(physics) {
-            this.physics = physics;
-            this.detector = Matter.Detector.create();
+        constructor() {
+            
         }
         
         /**
@@ -1400,7 +1362,7 @@ var Mushy = (function() {
         }
         
         /**
-         * @private
+         * Updates the collision listening to check for new collisions.
         **/
         update() {
             this.listenPairs.forEach((pairs, a) => {
@@ -1408,6 +1370,20 @@ var Mushy = (function() {
                     this.updatePair(a, b);
                 });
             });
+        }
+        
+        /**
+         * @private
+        **/
+        load() {
+            
+        }
+        
+        /**
+         * @private
+        **/
+        unload() {
+            this.listenPairs = new Map();
         }
         
     }
@@ -1422,19 +1398,12 @@ var Mushy = (function() {
          * @private
         **/
         currentCategory = 1;
-        
-        /**
-         * @private
-        **/
-        callbacks = new Map();
 
         /**
          * Creates a new collision manager.
-         * 
-         * @param {Physics} physics - The physics engine to attach to.
         **/
-        constructor(physics) {
-            this.listener = new CollisionListenManager(physics);
+        constructor() {
+            
         }
 
         /**
@@ -1512,10 +1481,24 @@ var Mushy = (function() {
                 }
             }
         }
+        
+        /**
+         * @private
+        **/
+        load() {
+            
+        }
+        
+        /**
+         * @private
+        **/
+        unload() {
+            this.currentCategory = 1;
+        }
     }
 
     /**
-     * Creates new bodies and manages gravity. 
+     * Creates new bodies and manages gravity, as well as collisions.
      * @memberof module:Mushy
     **/
     class Physics {
@@ -1539,21 +1522,12 @@ var Mushy = (function() {
          * A reference to the Matter physics engine.
          * @type {object}
         **/ 
-        engine = Matter.Engine.create();
-
-        /**
-         * A collision manager.
-         * @type {CollisionManager}
-        **/
-        collision = new CollisionManager(this);                 
+        engine = Matter.Engine.create();  
 
         /**
          * Creates a new physics engine.
-         * 
-         * @param {Scene} scene - The scene to attach to.
         **/
-        constructor(scene) {
-            this.scene = scene;
+        constructor() {
             this.engine.world.gravity.y = 0;
         }
 
@@ -1661,7 +1635,6 @@ var Mushy = (function() {
          * @private
         **/
         update(deltaTime) {
-            this.collision.listener.update();
             Matter.Engine.update(this.engine, deltaTime);
         }
         
@@ -1676,7 +1649,6 @@ var Mushy = (function() {
          * @private
         **/
         unload() {
-            this.collision = new CollisionManager(this);
             this.sprites.clear();
             Matter.Engine.clear(this.engine);
             Matter.Composite.clear(this.engine.world);
@@ -1714,28 +1686,28 @@ var Mushy = (function() {
 
         /**
          * Creates a new loop.
-         * 
-         * @param {Scene} scene - The scene to attach to.
         **/
-        constructor(scene) {
-            this.scene = scene;
+        constructor() {
+            
         }
         
         /**
          * @private
         **/
-        draw() {
+        draw(callback) {
             this.deltaTime = Math.min(performance.now() - this.lastFrame, 1000 / this.minFPS);
             this.lastFrame = performance.now();
-            this.scene.internalDraw(this.deltaTime);
+            callback(this.deltaTime);
         }
         
         /**
          * Starts the loop.
+         * 
+         * @param {Scene} scene - The scene to loop with.
         **/
-        start() {
+        start(callback) {
             this.isRunning = true;
-            this.loop();
+            this.loop(callback);
         }
         
         /**
@@ -1748,11 +1720,11 @@ var Mushy = (function() {
         /**
          * @private
         **/
-        loop() {
+        loop(callback) {
             window.requestAnimationFrame(() => {
-                this.draw();
+                this.draw(callback);
                 if (this.isRunning) {
-                    this.loop();
+                    this.loop(callback);
                 }
             });
         }
@@ -1760,8 +1732,8 @@ var Mushy = (function() {
         /**
          * @private
         **/
-        load() {
-            this.start();
+        load(callback) {
+            this.start(callback);
         }
         
         /**
@@ -1798,12 +1770,12 @@ var Mushy = (function() {
         up = [];
 
         /**
-         * Creates a new key input.
+         * Creates a new key input manager.
          * 
-         * @param {Scene} scene - The scene to attach to.
+         * @param {HTMLCanvasElement} canvas - The canvas to use.
         **/
-        constructor(scene) {
-            this.scene = scene;
+        constructor(canvas) {
+            this.canvas = canvas;
         }
         
         /**
@@ -1811,7 +1783,7 @@ var Mushy = (function() {
         **/
         load() {
             this.keyDownCallback = event => {
-                if (document.activeElement !== this.scene.render.canvas) {
+                if (document.activeElement !== this.canvas) {
                     return;                    
                 }
                 if(["ArrowUp","ArrowDown"].indexOf(event.code) > -1) {
@@ -1911,12 +1883,17 @@ var Mushy = (function() {
         contextMenu = false;
 
         /**
-         * Creates a new mouse input.
-         * 
-         * @param {Scene} scene - The scene to attach to.
+         * @private
         **/
-        constructor(scene) {
-            this.scene = scene;
+        canvas = null;
+
+        /**
+         * Creates a new mouse input manager.
+         * 
+         * @param {HTMLCanvasElement} canvas - The canvas to use.
+        **/
+        constructor(canvas) {
+            this.canvas = canvas;
         }
         
         /**
@@ -1950,25 +1927,26 @@ var Mushy = (function() {
             };
             
             this.mouseMoveCallback = event => {
-                this.x = event.offsetX / this.scene.render.fit.scale;
-                this.y = event.offsetY / this.scene.render.fit.scale;
+                const scale = this.canvas.dataset.scale ?? 1;
+                this.x = event.offsetX / scale;
+                this.y = event.offsetY / scale;
             };
             
-            this.scene.render.canvas.addEventListener("mousedown", this.mouseDownCallback);
+            this.canvas.addEventListener("mousedown", this.mouseDownCallback);
 
-            this.scene.render.canvas.addEventListener("mouseup", this.mouseUpCallback);
-            this.scene.render.canvas.addEventListener("contextmenu", this.contextMenuCallback);
-            this.scene.render.canvas.addEventListener("mousemove", this.mouseMoveCallback);
+            this.canvas.addEventListener("mouseup", this.mouseUpCallback);
+            this.canvas.addEventListener("contextmenu", this.contextMenuCallback);
+            this.canvas.addEventListener("mousemove", this.mouseMoveCallback);
         }
         
         /**
          * @private
         **/
         unload() {
-            this.scene.render.canvas.removeEventListener("mousedown", this.mouseDownCallback);
-            this.scene.render.canvas.removeEventListener("mouseup", this.mouseUpCallback);
-            this.scene.render.canvas.removeEventListener("contextmenu", this.contextMenuCallback);
-            this.scene.render.canvas.removeEventListener("mousemove", this.mouseMoveCallback);
+            this.canvas.removeEventListener("mousedown", this.mouseDownCallback);
+            this.canvas.removeEventListener("mouseup", this.mouseUpCallback);
+            this.canvas.removeEventListener("contextmenu", this.contextMenuCallback);
+            this.canvas.removeEventListener("mousemove", this.mouseMoveCallback);
         }
 
         /**
@@ -2003,11 +1981,11 @@ var Mushy = (function() {
         /**
          * Creates a new input manager.
          * 
-         * @param {Scene} scene - The scene to attach to.
+         * @param {Canvas} canvas - The canvas to use.
         **/
-        constructor(scene) {
-            this.mouse = new MouseInput(scene);
-            this.keys = new KeyInput(scene);
+        constructor(canvas) {
+            this.mouse = new MouseInput(canvas);
+            this.keys = new KeyInput(canvas);
         }
         
         /**
@@ -2096,20 +2074,25 @@ var Mushy = (function() {
     /**
      * Manages logging to the console and HTML styling for it.
      * @memberof module:Mushy
+     * @module Console
     **/
-    class Console {
+    const Console = {
         
         /**
          * @private
         **/
-        static isOpen = false;
+        isOpen: false,
         
         /**
+         * The command line on the console.
          * @type {CommandLine}
         **/
-        static commands = new CommandLine(this);
+        commands: new CommandLine(this),
         
-        static {
+        /**
+         * @private
+        **/
+        createHTML() {
             this.container = document.createElement("div");
             this.container.style.position = "absolute";
             this.container.style.top = "0px";
@@ -2169,12 +2152,12 @@ var Mushy = (function() {
             this.form.style.display = "none";
             this.container.style.display = "none";
             this.log("Welcome to the developer console. Press / to close.");
-        }
+        },
     
         /**
          * @private
         **/
-        static open() {
+        open() {
             this.isOpen = true;
             this.container.style.display = "block";
             this.form.style.display = "block";
@@ -2182,35 +2165,29 @@ var Mushy = (function() {
             setTimeout(() => {
                 this.input.value = "";
             }, 1);
-        }
+        },
     
         /**
          * @private
         **/
-        static close() {
+        close() {
             this.isOpen = false;
             this.container.style.display = "none";
             this.form.style.display = "none";
             this.input.blur();
-        }
+        },
         
         /**
          * Logs a message to the console.
          * 
          * @param {string} message
         **/
-        static log(message) {
+        log(message) {
             const event = new CustomEvent("commandOutput", { detail: message });
             document.dispatchEvent(event);
-        }
-
-        /**
-         * Don't use this constructor. Console is a static class.
-        **/
-        constructor() {
-
-        }
-    }
+        },
+    };
+    Console.createHTML();
 
     /**
      * A composite class that contains all the components of a scene.
@@ -2247,6 +2224,24 @@ var Mushy = (function() {
          * @type {Loop}
         **/
         loop = null;
+        
+        /**
+         * The canvas fit in the scene.
+         * @type {CanvasFit}
+        **/
+        fit = null;
+        
+        /**
+         * The collision manager in the scene.
+         * @type {CollisionManager}
+        **/
+        collider = new CollisionManager();   
+        
+        /**
+         * The collision listen manager in the scene.
+         * @type {CollisionListenManager}
+        **/
+        collisionListener = new CollisionListenManager();
 
         /**
          * Creates a new scene.
@@ -2255,19 +2250,20 @@ var Mushy = (function() {
         constructor(canvas = document.createElement("canvas")) {
             canvas.tabIndex = 0;
 
-            this.render = new Renderer(this, canvas);
-            this.physics = new Physics(this);
-            this.input = new Input(this);
-            this.loop = new Loop(this);
+            this.render = new Renderer(canvas);
+            this.fit = new CanvasFit(canvas);
+            this.input = new Input(canvas);
+            this.physics = new Physics();
+            this.loop = new Loop();
         }
         
         /**
          * Creates a group of matter sprites.
          * 
-         * @param {Array<MatterSprite>} items
+         * @param {Array<MatterSprite>} [items=[]]
          * @returns {Group}
         **/
-        group(items) {
+        group(items = []) {
             return new Group(items);
         }
 
@@ -2275,11 +2271,14 @@ var Mushy = (function() {
          * @private
         **/
         internalDraw(deltaTime) {
+            this.fit.resize(this.render.width, this.render.height);
+            this.render.pushMatrix();
+            this.render.scale(this.fit.scale, this.fit.scale);
             this.physics.update(deltaTime);
-            this.render.fit.push();
+            this.collisionListener.update();
             this.draw();
-            this.render.fit.pop();
             this.input.update();
+            this.render.popMatrix();
         }
         
         /**
@@ -2287,10 +2286,14 @@ var Mushy = (function() {
         **/
         internalLoad(data) {
             this.data = data;
-            this.loop.load();
+            this.loop.load(deltaTime => {
+                this.internalDraw(deltaTime);
+            });
             this.input.load();
             this.physics.load();
             this.render.load();
+            this.collider.load();
+            this.collisionListener.load();
             this.load();
         }
         
@@ -2302,6 +2305,8 @@ var Mushy = (function() {
             this.loop.unload();
             this.physics.unload();
             this.render.unload();
+            this.collider.unload();
+            this.collisionListener.unload();
             this.unload();
         }
         
@@ -2370,6 +2375,10 @@ var Mushy = (function() {
     
     return {
         Scene,
+        /**
+         * A reference to the Console object.
+         * @type {object}
+        **/
         Console,
         SceneManager,
         Input,
@@ -2383,12 +2392,12 @@ var Mushy = (function() {
         CollisionListenManager,
         CanvasFit,
         EventSystem,
+        MatterSprite,
         /**
          * A reference to the Matter.js instance.
          * @type {object}
         **/
         Matter,
-        MatterSprite,
         
         /**
          * Returns true if the scene has been opened in fullscreen
