@@ -960,6 +960,7 @@ var Mushy = (function() {
         /**
          * The area of the body.
          * @type {number}
+         * @readonly
         **/
         get area() {
             return this.body.area;
@@ -968,6 +969,7 @@ var Mushy = (function() {
         /**
          * The bounds of the body.
          * @type {number}
+         * @readonly
         **/
         get bounds() {
             return this.body.bounds;
@@ -976,6 +978,7 @@ var Mushy = (function() {
         /**
          * The density of the body.
          * @type {number}
+         * @readonly
         **/
         get density() {
             return this.body.density;
@@ -984,6 +987,7 @@ var Mushy = (function() {
         /**
          * The mass of the body.
          * @type {number}
+         * @readonly
         **/
         get mass() {
             return this.body.mass;
@@ -1721,7 +1725,7 @@ var Mushy = (function() {
         /**
          * Starts the loop.
          * 
-         * @param {Scene} scene - The scene to loop with.
+         * @param {function} callback - The callback to call every frame.
         **/
         start(callback) {
             this.isRunning = true;
@@ -2394,7 +2398,7 @@ var Mushy = (function() {
         
     }
 
-    return {
+    const Mushy = {
         Scene,
         /**
          * A reference to the Console object.
