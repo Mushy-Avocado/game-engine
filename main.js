@@ -1,5 +1,3 @@
-import Matter from 'https://cdn.jsdelivr.net/npm/matter-js@0.20.0/+esm';
-
 /**
  * @namespace Mushy
 **/
@@ -872,7 +870,7 @@ var Mushy = (function() {
      * A class with methods for controlling the physics of a matter body.
      * @memberof Mushy
     **/
-    class MatterSprite extends EventSystem {
+    class MatterBody extends EventSystem {
 
         /**
          * @private
@@ -886,13 +884,13 @@ var Mushy = (function() {
         body = null;
         
         /**
-         * Creates a new matter sprite.
+         * Creates a new matter body.
          * 
-         * @param {object} matterBody - The matter body to attach to this sprite.
+         * @param {object} matterBody - The matter body to attach to this body.
         **/
         constructor(matterBody) {
             super();
-            matterBody.sprite = this;
+            matterBody.body = this;
             this.body = matterBody;
             this.body.collisionFilter.group = -1;
             this.body.collisionFilter.mask = 0;
@@ -1186,7 +1184,7 @@ var Mushy = (function() {
     }
 
     /**
-     * A collection of matter sprites.
+     * A collection of items that has an event system that detects when items are added or removed.
      * @memberof Mushy
     **/
     class Group extends EventSystem {
@@ -1199,7 +1197,7 @@ var Mushy = (function() {
         /**
          * Creates a new group.
          * 
-         * @param {Array<MatterSprite>} [items=[]] - The items to initialize the group with.
+         * @param {Array} [items=[]] - The items to initialize the group with.
         **/
         constructor(items = []) {
             super();
@@ -1207,9 +1205,9 @@ var Mushy = (function() {
         }
 
         /**
-         * Adds a matter sprite to the group.
+         * Adds an item to the group.
          * 
-         * @param {MatterSprite} item
+         * @param {*} item
         **/
         add(item) {
             this.items.push(item);
@@ -1217,9 +1215,9 @@ var Mushy = (function() {
         }
 
         /**
-         * Removes a matter sprite from the group.
+         * Removes an item from the group.
          * 
-         * @param {MatterSprite} item
+         * @param {*} item
         **/
         remove(item) {
             const index = this.items.indexOf(item);
@@ -1237,7 +1235,7 @@ var Mushy = (function() {
         }
 
         /**
-         * Invokes the given callback on each item in the group, passing a MatterSprite to it.
+         * Invokes the given callback on each item in the group, passing each item to it.
          * 
          * @param {function} callback
         **/
@@ -1277,8 +1275,8 @@ var Mushy = (function() {
         /**
          * Listens for 2 objects colliding and invokes the callback. The callback recieves a, b, and the collision data, which is a Matter.js collision object.
          * 
-         * @param {MatterSprite|Group} a
-         * @param {MatterSprite|Group} b
+         * @param {MatterBody|Group} a
+         * @param {MatterBody|Group} b
          * @param {function} callback
         **/
         add(a, b, callback) {
@@ -1301,7 +1299,7 @@ var Mushy = (function() {
                         });
                     });
                 } else {
-                    // a is a group, b is a sprite
+                    // a is a group, b is a body
                     a.each(a => {
                         this.internalAddSingle(a, b, callback);
                     });
@@ -1311,7 +1309,7 @@ var Mushy = (function() {
                 }
             } else {
                 if (b instanceof Group) {
-                    // a is a sprite, b is a group
+                    // a is a body, b is a group
                     b.each(b => {
                         this.internalAddSingle(a, b, callback);
                     });
@@ -1319,7 +1317,7 @@ var Mushy = (function() {
                         this.internalAddSingle(a, item, callback);
                     });
                 } else {
-                    // Both are sprites
+                    // Both are bodies
                     this.internalAddSingle(a, b, callback);
                 }
             }
@@ -1345,8 +1343,8 @@ var Mushy = (function() {
          * @private
         **/
         processCollision(collision) {
-            let a = collision.bodyA.sprite;
-            let b = collision.bodyB.sprite;
+            let a = collision.bodyA.body;
+            let b = collision.bodyB.body;
             let callback = this.getCollisionCallback(a, b);
             if (callback) {
                 callback(a, b, collision);
@@ -1457,8 +1455,8 @@ var Mushy = (function() {
         /**
          * Makes it so both objects collide with each other.
          * 
-         * @param {MatterSprite|Group} a
-         * @param {MatterSprite|Group} b
+         * @param {MatterBody|Group} a
+         * @param {MatterBody|Group} b
         **/
         add(a, b) {
             if (a instanceof Group) {
@@ -1480,7 +1478,7 @@ var Mushy = (function() {
                         });
                     });
                 } else {
-                    // a is a group, b is a sprite
+                    // a is a group, b is a body
                     a.each(a => {
                         this.internalAddSingle(a, b);
                     });
@@ -1490,7 +1488,7 @@ var Mushy = (function() {
                 }
             } else {
                 if (b instanceof Group) {
-                    // a is a sprite, b is a group
+                    // a is a body, b is a group
                     b.each(b => {
                         this.internalAddSingle(a, b);
                     });
@@ -1498,7 +1496,7 @@ var Mushy = (function() {
                         this.internalAddSingle(a, item);
                     });
                 } else {
-                    // Both are sprites
+                    // Both are bodies
                     this.internalAddSingle(a, b);
                 }
             }
@@ -1528,7 +1526,7 @@ var Mushy = (function() {
         /**
          * @private
         **/
-        sprites = new Group();
+        bodies = new Group();
         
         /**
          * @private
@@ -1561,7 +1559,7 @@ var Mushy = (function() {
          * @param {number} width
          * @param {number} height
         **/
-        rectangle(x, y, width, height) {
+        static rectangle(x, y, width, height) {
             return Matter.Bodies.rectangle(x, y, width, height);
         }
 
@@ -1572,7 +1570,7 @@ var Mushy = (function() {
          * @param {number} y
          * @param {number} radius
         **/
-        circle(x, y, radius) {
+        static circle(x, y, radius) {
             return Matter.Bodies.circle(x, y, radius);
         }
 
@@ -1584,7 +1582,7 @@ var Mushy = (function() {
          * @param {integer} sides
          * @param {number} radius
         **/
-        polygon(x, y, sides, radius) {
+        static polygon(x, y, sides, radius) {
             return Matter.Bodies.polygon(x, y, sides, radius);
         }
 
@@ -1597,7 +1595,7 @@ var Mushy = (function() {
          * @param {number} height
          * @param {number} slope - A value between 0 and 1.
         **/
-        trapezoid(x, y, width, height, slope) {
+        static trapezoid(x, y, width, height, slope) {
             return Matter.Bodies.trapezoid(x, y, width, height, slope);
         }
 
@@ -1608,40 +1606,56 @@ var Mushy = (function() {
          * @param {number} y
          * @param {Array} vertices - An array of objects with an  x and y value.
         **/
-        customShape(x, y, vertices) {
+        static customShape(x, y, vertices) {
             return Matter.Bodies.fromVertices(x, y, vertices);
         }
 
         /**
          * Applies gravity to the matter body.
          * 
-         * @param {MatterSprite} matterSprite - The body to apply gravity to.
+         * @param {MatterBody} matterBody - The body to apply gravity to.
         **/
-        applyGravity(matterSprite) {
-            matterSprite.addForce(this.gravityX * matterSprite.mass, this.gravityY * matterSprite.mass);
+        applyGravity(matterBody) {
+            matterBody.addForce(this.gravityX * matterBody.mass, this.gravityY * matterBody.mass);
         }
 
         /**
          * Adds the body to the physics engine.
          * 
-         * @param {MatterSprite} matterSprite
+         * @param {MatterBody} matterBody
         **/
-        add(matterSprite) {
-            this.sprites.add(matterSprite);
-            matterSprite.isDead = false;
-            Matter.Composite.add(this.engine.world, matterSprite.body);
+        addBody(matterBody) {
+            this.bodies.add(matterBody);
+            Matter.Composite.add(this.engine.world, matterBody.body);
         }
 
         /**
          * Removes the body from the physics engine.
          * 
-         * @param {MatterSprite} matterSprite
+         * @param {MatterBody} matterBody
         **/
-        remove(matterSprite) {
-            this.sprites.remove(matterSprite);
-            matterSprite.isDead = true;
-            Matter.Composite.remove(this.engine.world, matterSprite.body);
-            matterSprite.trigger("remove", this);
+        removeBody(matterBody) {
+            this.bodies.remove(matterBody);
+            Matter.Composite.remove(this.engine.world, matterBody.body);
+            matterBody.trigger("remove", this);
+        }
+        
+        /**
+         * Adds the constraint to the physics engine.
+         * 
+         * @param {object} constraint - The Matter constraint created from Physics.constraint()
+        **/
+        addConstraint(constraint) {
+            Matter.Composite.add(this.engine.world, constraint);    
+        }
+        
+        /**
+         * Removes the constraint from the physics engine.
+         * 
+         * @param {object} constraint - The Matter constraint created from Physics.constraint()
+        **/
+        removeConstraint(constraint) {
+            Matter.Composite.remove(this.engine.world, constraint);
         }
         
         /**
@@ -1673,9 +1687,18 @@ var Mushy = (function() {
          * @private
         **/
         unload() {
-            this.sprites.clear();
+            this.bodies.clear();
             Matter.Engine.clear(this.engine);
             Matter.Composite.clear(this.engine.world);
+        }
+        
+        /**
+         * Creates a new constraint. See the {@link https://brm.io/matter-js/docs/classes/Constraint.html documentation for Matter.Constraint} for options.
+         * 
+         * @param {object} options - The options for the constraint. See the link above for more info.
+        **/
+        static constraint(options) {
+            return Matter.Constraint.create(options);
         }
 
     }
@@ -2406,7 +2429,7 @@ var Mushy = (function() {
         CollisionListenManager,
         CanvasFit,
         EventSystem,
-        MatterSprite,
+        MatterBody,
         /**
          * A reference to the Matter.js instance.
          * @type {object}
