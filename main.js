@@ -359,19 +359,6 @@ var Mushy = (function() {
         }
         
         /**
-         * Resizes the canvas. Will not reflect actual size if a CanvasFit is attached to the canvas.
-         * 
-         * @param {number} width
-         * @param {number} height
-        **/
-        size(width, height) {
-            this.canvas.width = width;
-            this.canvas.height = height;
-            this.canvas.dataset.actualWidth = width;
-            this.canvas.dataset.actualHeight = height;
-        }
-        
-        /**
          * Fills the canvas with a solid RGB value. Optionally 1 argument can be supplied for all 3 rgb values.
          * @param {number} r
          * @param {number} g
@@ -832,6 +819,8 @@ var Mushy = (function() {
          * @private
         **/
         listeners = {};
+        
+        
 
         /**
          * Creates a new event system.
@@ -855,6 +844,22 @@ var Mushy = (function() {
         }
 
         /**
+         * Makes the given callback no longer be invoked when the event is triggered.
+         * 
+         * @param {string} event - The event to remove the callback from.
+         * @param {function} callback - The callback to remove.
+        **/
+        off(event, callback) {
+            if (!this.listeners[event]) {
+                return;
+            }
+            const index = this.listeners[event].indexOf(callback);
+            if (index > -1) {
+                this.listeners[event].splice(index, 1);
+            }
+        }
+
+        /**
          * Makes all listener callbacks be triggered for the given event.
          * 
          * @param {string} event - The event to trigger.
@@ -872,7 +877,7 @@ var Mushy = (function() {
      * A class with methods for controlling the physics of a matter body.
      * @memberof Mushy
     **/
-    class MatterBody extends EventSystem {
+    class MatterBody {
 
         /**
          * @private
@@ -882,6 +887,7 @@ var Mushy = (function() {
         /**
          * A Matter.js physics body.
          * @type {object}
+         * @readonly
         **/
         body = null;
         
@@ -891,7 +897,6 @@ var Mushy = (function() {
          * @param {object} matterBody - The matter body to attach to this body.
         **/
         constructor(matterBody) {
-            super();
             matterBody.body = this;
             this.body = matterBody;
             this.body.collisionFilter.group = -1;
@@ -923,38 +928,46 @@ var Mushy = (function() {
 
         /**
          * The x velocity of the body.
-         * @readonly
          * @type {number}
         **/
         get velocityX() {
             return this.body.velocity.x;
         }
+        set velocityX(value) {
+            Matter.Body.setVelocity(this.body, Matter.Vector.create(value, this.velocityY));
+        }
 
         /**
          * The y velocity of the body.
-         * @readonly
          * @type {number}
         **/
         get velocityY() {
             return this.body.velocity.y;
         }
+        set velocityY(value) {
+            Matter.Body.setVelocity(this.body, Matter.Vector.create(this.velocityX, value));
+        }
         
         /**
          * The angular velocity of the body.
-         * @readonly
          * @type {number}
         **/
         get angularVelocity() {
             return this.body.angularVelocity;
         }
+        set angularVelocity(value) {
+            Matter.Body.setAngularVelocity(this.body, value);
+        }
 
         /**
          * The angle of the body in degrees.
-         * @readonly
          * @type {number}
         **/
         get angle() {
             return Mathf.degrees(this.body.angle);
+        }
+        set angle(value) {
+            Matter.Body.setAngle(this.body, Mathf.radians(value));
         }
 
         /**
@@ -978,19 +991,23 @@ var Mushy = (function() {
         /**
          * The density of the body.
          * @type {number}
-         * @readonly
         **/
         get density() {
             return this.body.density;
+        }
+        set density(value) {
+            Matter.Body.setDensity(value);
         }
 
         /**
          * The mass of the body.
          * @type {number}
-         * @readonly
         **/
         get mass() {
             return this.body.mass;
+        }
+        set mass(value) {
+            Matter.Body.setMass(this.body, value);
         }
 
         /**
@@ -1026,15 +1043,6 @@ var Mushy = (function() {
         }
 
         /**
-         * Sets the angle of the body.
-         * 
-         * @param {number} angle - The angle in degrees.
-        **/
-        setAngle(angle) {
-            Matter.Body.setAngle(this.body, angle * (Math.PI / 180));
-        }
-
-        /**
          * Adds a force to the center of the body.
          * 
          * @param {number} forceX
@@ -1057,15 +1065,6 @@ var Mushy = (function() {
         }
 
         /**
-         * Sets the angular velocity of the body.
-         * 
-         * @param {number} velocity
-        **/
-        setAngularVelocity(velocity) {
-            Matter.Body.setAngularVelocity(this.body, velocity);
-        }
-
-        /**
          * Sets the center of the body.
          * 
          * @param {number} x
@@ -1077,15 +1076,6 @@ var Mushy = (function() {
         }
 
         /**
-         * Sets the density of the body.
-         * 
-         * @param {number} value
-        **/
-        setDensity(value) {
-            Matter.Body.setDensity(this.body, value);
-        }
-
-        /**
          * Sets the inertia of the body.
          * Set to infinity to allow for no turning.
          * 
@@ -1093,26 +1083,6 @@ var Mushy = (function() {
         **/
         setInertia(value) {
             Matter.Body.setInertia(this.body, value);
-        }
-
-        /**
-         * Sets the position of the body.
-         * 
-         * @param {number} x
-         * @param {number} y
-        **/
-        setPosition(x, y) {
-            Matter.Body.setPosition(this.body, Matter.Vector.create(x, y));
-        }
-
-        /**
-         * Sets the velocity of the body.
-         * 
-         * @param {number} x
-         * @param {number} y
-        **/
-        setVelocity(x, y) {
-            Matter.Body.setVelocity(this.body, Matter.Vector.create(x, y));
         }
 
         /**
@@ -1184,147 +1154,53 @@ var Mushy = (function() {
         }
 
     }
-
-    /**
-     * A collection of items that has an event system that detects when items are added or removed.
-     * @memberof Mushy
-    **/
-    class Group extends EventSystem {
-        
-        /**
-         * @private
-        **/
-        items = [];
-        
-        /**
-         * Creates a new group.
-         * 
-         * @param {Array} [items=[]] - The items to initialize the group with.
-        **/
-        constructor(items = []) {
-            super();
-            items.forEach(this.add.bind(this));
-        }
-
-        /**
-         * Adds an item to the group.
-         * 
-         * @param {*} item
-        **/
-        add(item) {
-            this.items.push(item);
-            this.trigger("add", item);
-        }
-
-        /**
-         * Removes an item from the group.
-         * 
-         * @param {*} item
-        **/
-        remove(item) {
-            const index = this.items.indexOf(item);
-            if (index > -1) {
-                this.trigger("remove", item);
-                this.items.splice(index, 1);
-            }
-        }
-        
-        /**
-         * Clears all items from the group.
-        **/
-        clear() {
-            this.items.length = 0;
-        }
-
-        /**
-         * Invokes the given callback on each item in the group, passing each item to it.
-         * 
-         * @param {function} callback
-        **/
-        each(callback) {
-            this.items.forEach(item => callback(item));
-        }
-    }
     
     /**
      * Controls callbacks for when objects collide.
      * @memberof Mushy
     **/
     class CollisionListenManager {
-        
         /**
          * @private
         **/
         listenPairs = new Map();
-        
+    
         /**
          * Creates a new collision listen manager.
         **/
         constructor() {
             
         }
-        
+    
         /**
-         * @private
+         * Stops listening for collisions between two matter bodies.
+         *
+         * @param {MatterBody} a
+         * @param {MatterBody} b
         **/
-        internalAddSingle(a, b, callback) {
+        remove(a, b) {
+            if (this.listenPairs.has(a)) {
+                this.listenPairs.get(a).delete(b);
+                if (this.listenPairs.get(a).size === 0) {
+                    this.listenPairs.delete(a);
+                }
+            }
+        }
+    
+        /**
+         * Listens for 2 matter bodies colliding and invokes the callback. The callback recieves a, b, and the collision data, which is a {@link https://brm.io/matter-js/docs/classes/Collision.html Matter.js collision object}. You must call CollisionListenManager#remove() when either object is no longer in use, otherwise it will cause performance issues.
+         *
+         * @param {MatterBody} a
+         * @param {MatterBody} b
+         * @param {function} callback
+        **/
+        add(a, b, callback) {
             if (!this.listenPairs.has(a)) {
                 this.listenPairs.set(a, new Map());
             }
             this.listenPairs.get(a).set(b, callback);
         }
-        
-        /**
-         * Listens for 2 objects colliding and invokes the callback. The callback recieves a, b, and the collision data, which is a Matter.js collision object.
-         * 
-         * @param {MatterBody|Group} a
-         * @param {MatterBody|Group} b
-         * @param {function} callback
-        **/
-        add(a, b, callback) {
-            if (a instanceof Group) {
-                if (b instanceof Group) {
-                    // Both are groups
-                    a.each(a => {
-                        b.each(b => {
-                            this.internalAddSingle(a, b, callback);
-                        });
-                    });
-                    a.on("add", item => {
-                        b.each(b => {
-                            this.internalAddSingle(item, b, callback);
-                        });
-                    });
-                    b.on("add", item => {
-                        a.each(a => {
-                            this.internalAddSingle(a, item, callback);
-                        });
-                    });
-                } else {
-                    // a is a group, b is a body
-                    a.each(a => {
-                        this.internalAddSingle(a, b, callback);
-                    });
-                    a.on("add", item => {
-                        this.internalAddSingle(item, b, callback);
-                    });
-                }
-            } else {
-                if (b instanceof Group) {
-                    // a is a body, b is a group
-                    b.each(b => {
-                        this.internalAddSingle(a, b, callback);
-                    });
-                    b.on("add", item => {
-                        this.internalAddSingle(a, item, callback);
-                    });
-                } else {
-                    // Both are bodies
-                    this.internalAddSingle(a, b, callback);
-                }
-            }
-        }
-        
+    
         /**
          * @private
         **/
@@ -1333,14 +1209,14 @@ var Mushy = (function() {
                 ? this.listenPairs.get(a).get(b)
                 : null;
         }
-        
+    
         /**
          * @private
         **/
         hasPair(a, b) {
             return this.listenPairs.has(a) && this.listenPairs.get(a).has(b);
         }
-        
+    
         /**
          * @private
         **/
@@ -1349,65 +1225,41 @@ var Mushy = (function() {
             let b = collision.bodyB.body;
             let callback = this.getCollisionCallback(a, b);
             if (callback) {
-                callback(a, b, collision);
+                callback(collision);
             }
             callback = this.getCollisionCallback(b, a);
             if (callback) {
-                callback(b, a, Matter.Collision.create(b.body, a.body));
+                callback(Matter.Collision.create(b.body, a.body));
             }
         }
-        
-        /**
-         * @private
-        **/
-        updatePair(a, b) {
-            if (a instanceof Group) {
-                a.each(a => {
-                    if (b instanceof Group) {
-                        b.each(b => {
-                            this.updatePair(a, b); 
-                        });
-                    } else {
-                        this.updatePair(a, b); 
-                    }
-                });
-            } else if (b instanceof Group) {
-                this.updatePair(b, a);
-            } else {
-                if (a !== b && Matter.Bounds.overlaps(a.bounds, b.bounds)) {
-                    const collision = Matter.Collision.collides(a.body, b.body);
-                    if (collision) {
-                        this.processCollision(collision);   
-                    }
-                }
-            }
-        }
-        
+    
         /**
          * Updates the collision listening to check for new collisions.
         **/
         update() {
             this.listenPairs.forEach((pairs, a) => {
                 pairs.forEach((callback, b) => {
-                    this.updatePair(a, b);
+                    if (a !== b && Matter.Bounds.overlaps(a.bounds, b.bounds)) {
+                        const collision = Matter.Collision.collides(a.body, b.body);
+                        if (collision) {
+                            this.processCollision(collision);
+                        }
+                    }
                 });
             });
         }
-        
+    
         /**
          * @private
         **/
-        load() {
-            
-        }
-        
+        load() {}
+    
         /**
          * @private
         **/
         unload() {
             this.listenPairs = new Map();
         }
-        
     }
 
     /**
@@ -1427,12 +1279,27 @@ var Mushy = (function() {
         constructor() {
             
         }
-
+    
         /**
-         * @private
+         * Makes it so both objects no longer collide with each other.
+         *
+         * @param {MatterBody} a
+         * @param {MatterBody} b
         **/
-        internalAddSingle(a, b, callback) {
-
+        remove(a, b) {
+            const bodyA = a.body;
+            const bodyB = b.body;
+            bodyA.collisionFilter.mask &= ~bodyB.collisionFilter.category;
+            bodyB.collisionFilter.mask &= ~bodyA.collisionFilter.category;
+        }
+        
+        /**
+         * Makes it so both objects collide with each other. You can call this as many times as you want without causing performance issues. No need to call CollisionManager#remove().
+         * 
+         * @param {MatterBody} a
+         * @param {MatterBody} b
+        **/
+        set(a, b) {
             const bodyA = a.body;
             const bodyB = b.body;
 
@@ -1452,56 +1319,6 @@ var Mushy = (function() {
             // Set group to 0 so category & mask take effect
             bodyA.collisionFilter.group = 0;
             bodyB.collisionFilter.group = 0;
-        }
-
-        /**
-         * Makes it so both objects collide with each other.
-         * 
-         * @param {MatterBody|Group} a
-         * @param {MatterBody|Group} b
-        **/
-        add(a, b) {
-            if (a instanceof Group) {
-                if (b instanceof Group) {
-                    // Both are groups
-                    a.each(a => {
-                        b.each(b => {
-                            this.internalAddSingle(a, b);
-                        });
-                    });
-                    a.on("add", item => {
-                        b.each(b => {
-                            this.internalAddSingle(item, b);
-                        });
-                    });
-                    b.on("add", item => {
-                        a.each(a => {
-                            this.internalAddSingle(a, item);
-                        });
-                    });
-                } else {
-                    // a is a group, b is a body
-                    a.each(a => {
-                        this.internalAddSingle(a, b);
-                    });
-                    a.on("add", item => {
-                        this.internalAddSingle(item, b);
-                    });
-                }
-            } else {
-                if (b instanceof Group) {
-                    // a is a body, b is a group
-                    b.each(b => {
-                        this.internalAddSingle(a, b);
-                    });
-                    b.on("add", item => {
-                        this.internalAddSingle(a, item);
-                    });
-                } else {
-                    // Both are bodies
-                    this.internalAddSingle(a, b);
-                }
-            }
         }
         
         /**
@@ -1528,7 +1345,7 @@ var Mushy = (function() {
         /**
          * @private
         **/
-        bodies = new Group();
+        bodies = [];
         
         /**
          * @private
@@ -1627,7 +1444,7 @@ var Mushy = (function() {
          * @param {MatterBody} matterBody
         **/
         addBody(matterBody) {
-            this.bodies.add(matterBody);
+            this.bodies.push(matterBody);
             Matter.Composite.add(this.engine.world, matterBody.body);
         }
 
@@ -1637,9 +1454,11 @@ var Mushy = (function() {
          * @param {MatterBody} matterBody
         **/
         removeBody(matterBody) {
-            this.bodies.remove(matterBody);
+            const index = this.bodies.indexOf(matterBody);
+            if (index > -1) {
+                this.bodies.splice(index, 1);
+            }
             Matter.Composite.remove(this.engine.world, matterBody.body);
-            matterBody.trigger("remove", this);
         }
         
         /**
@@ -1689,7 +1508,7 @@ var Mushy = (function() {
          * @private
         **/
         unload() {
-            this.bodies.clear();
+            this.bodies.length = 0;
             Matter.Engine.clear(this.engine);
             Matter.Composite.clear(this.engine.world);
         }
@@ -1701,6 +1520,16 @@ var Mushy = (function() {
         **/
         static constraint(options) {
             return Matter.Constraint.create(options);
+        }
+        
+        /**
+         * Returns a {@link https://brm.io/matter-js/docs/classes/Collision.html Matter.js collision} if the two bodies are colliding, otherwise returns null.
+         * 
+         * @param {MatterBody} a
+         * @param {MatterBody} b
+        **/
+        static collides(a, b) {
+            return Matter.Collision.collides(a.body, b.body);
         }
 
     }
@@ -1801,19 +1630,19 @@ var Mushy = (function() {
     class KeyInput {
 
         /**
-         * The keys that are currently pressed.
+         * The keys that are currently pressed. The codes are taken from event.code at a {@link https://www.toptal.com/developers/keycode keyCode tool}
          * @type {Array<string>}
         **/
         pressed = [];
         
         /**
-         * The keys that were just pressed this frame.
+         * The keys that were just pressed this frame. The codes are taken from event.code at a {@link https://www.toptal.com/developers/keycode keyCode tool}
          * @type {Array<string>}
         **/
         down = [];
         
         /**
-         * The keys that were just released this frame.
+         * The keys that were just released this frame. The codes are taken from event.code at a {@link https://www.toptal.com/developers/keycode keyCode tool}
          * @type {Array<string>}
         **/
         up = [];
@@ -1880,53 +1709,61 @@ var Mushy = (function() {
         /**
          * x position of the mouse relative to the canvas.
          * @type {number}
+         * @readonly
         **/
         x = 0;
         
         /**
          * y position of the mouse relative to the canvas.
          * @type {number}
+         * @readonly
         **/
         y = 0;
 
         /**
          * Returns true every frame the left mouse button is pressed
          * @type {bool}
+         * @readonly
         **/
         left = false;
         
         /**
          * Returns true the frame the left mouse button is released
          * @type {bool}
+         * @readonly
         **/
         leftUp = false;
         
         /**
          * Returns true the frame the left mouse button is pressed
          * @type {bool}
+         * @readonly
         **/
         leftDown = false;
         
         /**
          * Returns true every frame the right mouse button is pressed
          * @type {bool}
+         * @readonly
         **/
         right = false;
         
         /**
          * Returns true the frame the right mouse button is pressed
          * @type {bool}
+         * @readonly
         **/
         rightUp = false;
         
         /**
          * Returns true the frame the right mouse button is released
          * @type {bool}
+         * @readonly
         **/
         rightDown = false;
 
         /**
-         * Whether to enable the right click menu.
+         * Whether to enable the right click menu. Default is false.
          * @type {bool}
         **/
         contextMenu = false;
@@ -2010,59 +1847,6 @@ var Mushy = (function() {
     }
 
     /**
-     * Manages mouse/keyboard input.
-     * @memberof Mushy
-    **/
-    class Input {
-        
-        /**
-         * The input from the mouse.
-         * @type {MouseInput}
-        **/
-        mouse = null;
-
-        /**
-         * The input from the keys.
-         * @type {KeyInput}
-        **/
-        keys = null;
-
-        /**
-         * Creates a new input manager.
-         * 
-         * @param {Canvas} canvas - The canvas to use.
-        **/
-        constructor(canvas) {
-            this.mouse = new MouseInput(canvas);
-            this.keys = new KeyInput(canvas);
-        }
-        
-        /**
-         * @private
-        **/
-        load() {
-            this.mouse.load();
-            this.keys.load();
-        }
-        
-        /**
-         * @private
-        **/
-        unload() {
-            this.mouse.unload();
-            this.keys.unload();
-        }
-
-        /**
-         * @private
-        **/
-        update() {
-            this.mouse.update();
-            this.keys.update();
-        }
-    }
-
-    /**
      * Manages the defining and execution of commands.
      * @memberof Mushy.Console
     **/
@@ -2122,7 +1906,7 @@ var Mushy = (function() {
     }
     
     /**
-     * Manages logging to the console.
+     * Manages logging to the console. Press / to open.
      * @namespace Console
      * @memberof Mushy
     **/
@@ -2266,10 +2050,16 @@ var Mushy = (function() {
         physics = null;
         
         /**
-         * The input in the scene.
-         * @type {Input}
+         * The key input in the scene.
+         * @type {KeyInput}
         **/
-        input = null;
+        keys = null;
+        
+        /**
+         * The mouse input in the scene.
+         * @type {MouseInput}
+        **/
+        mouse = null;
         
         /**
          * The loop in the scene.
@@ -2287,7 +2077,7 @@ var Mushy = (function() {
          * The collision manager in the scene.
          * @type {CollisionManager}
         **/
-        collider = new CollisionManager();   
+        collision = new CollisionManager();   
         
         /**
          * The collision listen manager in the scene.
@@ -2304,7 +2094,8 @@ var Mushy = (function() {
 
             this.render = new Renderer(canvas);
             this.fit = new CanvasFit(canvas);
-            this.input = new Input(canvas);
+            this.mouse = new MouseInput(canvas);
+            this.keys = new KeyInput(canvas);
             this.physics = new Physics();
             this.loop = new Loop();
         }
@@ -2319,35 +2110,37 @@ var Mushy = (function() {
             this.physics.update(deltaTime);
             this.collisionListener.update();
             this.draw();
-            this.input.update();
+            this.keys.update();
+            this.mouse.update();
             this.render.popMatrix();
         }
         
         /**
          * @private
         **/
-        internalLoad(data) {
-            this.data = data;
+        internalLoad() {
             this.loop.load(deltaTime => {
                 this.internalDraw(deltaTime);
             });
-            this.input.load();
+            this.keys.load();
+            this.mouse.load();
             this.physics.load();
             this.render.load();
-            this.collider.load();
+            this.collision.load();
             this.collisionListener.load();
-            this.load(data);
+            this.load();
         }
         
         /**
          * @private
         **/
         internalUnload() {
-            this.input.unload();
+            this.keys.unload();
+            this.mouse.unload();
             this.loop.unload();
             this.physics.unload();
             this.render.unload();
-            this.collider.unload();
+            this.collision.unload();
             this.collisionListener.unload();
             this.unload();
         }
@@ -2401,7 +2194,7 @@ var Mushy = (function() {
          * Loads a scene and unloads the previous one.
          * 
          * @param {string} id - The id of the scene to load.
-         * @param {object} [data={}] - The data to pass to the scene's load() method.
+         * @param {object} [data={}] - The data to assign to the scene's data property.
         **/
         load(id, data = {}) {
             if (this.scenes[this.currentScene]) {
@@ -2409,7 +2202,8 @@ var Mushy = (function() {
             }
             this.currentScene = id;
             if (this.scenes[this.currentScene]) {
-                this.scenes[this.currentScene].internalLoad(data);
+                this.scenes[this.currentScene].data = data;
+                this.scenes[this.currentScene].internalLoad();
             }    
         }
         
@@ -2420,13 +2214,11 @@ var Mushy = (function() {
         Mathf,
         Scene,
         SceneManager,
-        Input,
         MouseInput,
         KeyInput,
         Physics,
         Renderer,
         Loop,
-        Group,
         CollisionManager,
         CollisionListenManager,
         CanvasFit,
@@ -2435,12 +2227,14 @@ var Mushy = (function() {
         /**
          * A reference to the Matter.js instance.
          * @type {object}
+         * @memberof Mushy
         **/
         Matter,
         
         /**
          * Returns true if the scene has been opened in fullscreen
          * @type {bool}
+         * @memberof Mushy
         **/
         get isFullscreen() {
             return !!window.opener;
@@ -2449,6 +2243,7 @@ var Mushy = (function() {
         /**
          * Returns true if the game is located within the Khan Academy environment
          * @type {bool}
+         * @memberof Mushy
         **/
         get isKhanAcademy() {
             return window.location.href.includes("kasandbox");
@@ -2456,12 +2251,28 @@ var Mushy = (function() {
         
         /**
          * Opens the game in fullscreen (for Khan Academy)
+         * @memberof Mushy
         **/
         fullscreen() {
             const w = window.open();
     		w.document.open();
     		w.document.write(`<!DOCTYPE html>${originalHTML}`);
     		w.document.close();
+        },
+        
+        /**
+         * Resizes the given canvas. Will not reflect actual size if a CanvasFit is attached to the canvas.
+         * 
+         * @param {HTMLCanvasElement} canvas
+         * @param {number} width
+         * @param {number} height
+         * @memberof Mushy
+        **/
+        size(canvas, width, height) {
+            canvas.width = width;
+            canvas.height = height;
+            canvas.dataset.actualWidth = width;
+            canvas.dataset.actualHeight = height;
         },
     };
 
